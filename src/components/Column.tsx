@@ -11,11 +11,12 @@ interface ColumnProps {
   onAdd: (status: Status) => void
   onOpen: (task: Task) => void
   isDragging: boolean
+  filtering: boolean
 }
 
 const columnDropId = (status: Status) => `column:${status}`
 
-export function Column({ column, tasks, onAdd, onOpen, isDragging }: ColumnProps) {
+export function Column({ column, tasks, onAdd, onOpen, isDragging, filtering }: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: columnDropId(column.id), data: { type: 'column' } })
 
   return (
@@ -62,6 +63,8 @@ export function Column({ column, tasks, onAdd, onOpen, isDragging }: ColumnProps
             >
               {isDragging ? (
                 'Drop here'
+              ) : filtering ? (
+                <span>No matching tasks</span>
               ) : (
                 <>
                   <span>{column.emptyHint}</span>

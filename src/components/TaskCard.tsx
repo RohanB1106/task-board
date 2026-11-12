@@ -3,6 +3,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { AlignLeft, CalendarDays, SignalHigh, SignalLow, SignalMedium } from 'lucide-react'
 import { dueInfo, type DueTone } from '../lib/dates'
 import type { Priority, Task } from '../lib/types'
+import { pick, useWorkspace } from '../lib/workspace'
+import { AvatarStack, LabelChip } from './Avatar'
 
 const DUE_STYLES: Record<DueTone, string> = {
   overdue: 'bg-red-50 text-red-700 ring-red-200',
@@ -24,6 +26,10 @@ export function PriorityIcon({ priority, className = '' }: { priority: Priority;
 export function TaskCardBody({ task, lifted = false }: { task: Task; lifted?: boolean }) {
   const isDone = task.status === 'done'
   const due = task.due_date ? dueInfo(task.due_date, isDone) : null
+  const { membersById, labelsById } = useWorkspace()
+  const assignees = pick(task.assignee_ids, membersById)
+  const labels = pick(task.label_ids, labelsById)
+  const hasFooter = Boolean(due || task.description || assignees.length)
 
   return (
     <div
@@ -49,8 +55,16 @@ export function TaskCardBody({ task, lifted = false }: { task: Task; lifted?: bo
         <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-zinc-500">{task.description}</p>
       )}
 
-      {(due || task.description) && (
-        <div className="mt-2.5 flex items-center gap-2">
+      {labels.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {labels.map((l) => (
+            <LabelChip key={l.id} label={l} />
+          ))}
+        </div>
+      )}
+
+      {hasFooter && (
+        <div className="mt-2.5 flex min-h-5 items-center gap-2">
           {due && (
             <span
               className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${DUE_STYLES[due.tone]}`}
@@ -60,6 +74,9 @@ export function TaskCardBody({ task, lifted = false }: { task: Task; lifted?: bo
             </span>
           )}
           {task.description && <AlignLeft aria-label="Has description" className="size-3.5 text-zinc-300" />}
+          <span className="ml-auto">
+            <AvatarStack members={assignees} />
+          </span>
         </div>
       )}
     </div>

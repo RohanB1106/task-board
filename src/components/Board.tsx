@@ -23,6 +23,8 @@ type ColumnMap = Record<Status, string[]>
 
 interface BoardProps {
   tasks: Task[]
+  /** Search / filters are hiding some tasks */
+  filtering?: boolean
   onMove: (id: string, status: Status, position: number) => void
   onAdd: (status: Status) => void
   onOpen: (task: Task) => void
@@ -51,7 +53,7 @@ function positionBetween(prev?: Task, next?: Task): number {
   return POSITION_STEP
 }
 
-export function Board({ tasks, onMove, onAdd, onOpen }: BoardProps) {
+export function Board({ tasks, filtering = false, onMove, onAdd, onOpen }: BoardProps) {
   const byId = useMemo(() => new Map(tasks.map((t) => [t.id, t])), [tasks])
   const settled = useMemo(() => groupByStatus(tasks), [tasks])
 
@@ -142,6 +144,7 @@ export function Board({ tasks, onMove, onAdd, onOpen }: BoardProps) {
             onAdd={onAdd}
             onOpen={onOpen}
             isDragging={activeId !== null}
+            filtering={filtering}
           />
         ))}
       </div>

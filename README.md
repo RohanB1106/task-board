@@ -1,11 +1,14 @@
 # Taskboard
 
+**Live demo:** https://task-board-five-beta.vercel.app
+
 A Kanban-style task board built with React, TypeScript and Supabase. Each visitor
 gets a private guest workspace through Supabase anonymous sign-in, and Row Level
 Security makes sure guests only ever see their own tasks.
 
 ## Features
 
+**Core**
 - **Board:** four columns (To Do, In Progress, In Review, Done), with drag and drop
   between and within columns using mouse, touch or keyboard
 - **Tasks:** title, description, priority (low / normal / high) and due date; create,
@@ -14,12 +17,25 @@ Security makes sure guests only ever see their own tasks.
   and reused after that
 - **Persistence:** every change saves to Supabase straight away; moves are
   optimistic and roll back with a notice if the save fails
-- **Due-date indicators:** overdue, due today and due soon badges
-- **Board stats:** total, done and overdue counts in the header
-- **Activity log:** database triggers record creates, status moves, edits and
-  assignment changes
 - **States:** loading placeholders, empty-column hints, error screens with retry,
   and pop-up notifications
+
+**Advanced**
+- **Team members and assignees:** add teammates (name + colour), assign one or
+  more to a task, and see avatar stacks on cards
+- **Labels:** create custom labels (or one-click starter labels), tag tasks with
+  several labels, and filter the board by them
+- **Comments:** comments are listed in time order on the task detail panel,
+  stored in a `comments` table
+- **Activity log:** database triggers record creates, column moves, field edits
+  and assignment changes, shown as a timeline (e.g. "moved from To Do → In
+  Progress · 2 hours ago")
+- **Due-date indicators:** overdue (red), due today / soon (amber), later (neutral)
+- **Search and filters:** search by title or description, and filter by priority,
+  assignee (including "Unassigned") and label, with an "X of Y" count
+- **Board stats:** total, done and overdue counts in the header
+- **Keyboard:** `N` new task, `/` search, `Esc` to close; cards can be moved with
+  the keyboard
 
 ## Tech stack
 
@@ -70,19 +86,23 @@ Requirements: Node.js 20+ and a free Supabase project.
 
 ```
 src/
-  App.tsx                 session gate + workspace layout
+  App.tsx                 session gate, workspace layout, filters, shortcuts
   components/
     Board.tsx             DnD context, column grouping, drop → position logic
     Column.tsx            droppable column with sortable list + empty state
-    TaskCard.tsx          card UI + sortable wrapper
-    TaskDialog.tsx        create / edit / delete dialog
-    Header.tsx            title, stats, new-task button
-    StatusScreens.tsx     loader, error panel, setup notice, toasts
+    TaskCard.tsx          card UI (labels, due badge, avatars) + sortable wrapper
+    TaskDialog.tsx        create / edit panel with assignee + label pickers
+    TaskThread.tsx        merged comments + activity timeline
+    TeamDialog.tsx        manage team members and labels
+    Toolbar.tsx           search + filter menus
+    FilterMenu.tsx, Avatar.tsx, Header.tsx, StatusScreens.tsx
   hooks/
     useGuestSession.ts    anonymous sign-in (StrictMode-safe)
-    useTasks.ts           load + optimistic create / update / delete
+    useTasks.ts           tasks + join-table links, optimistic mutations
+    useTeam.ts            members + labels
+    useTaskThread.ts      comments + activity for one task
     useToasts.ts
-  lib/                    supabase client, types, constants, date helpers
+  lib/                    supabase client, types, filters, colours, dates
 supabase/
   schema.sql              full schema, RLS policies and triggers
 ```
