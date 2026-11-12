@@ -26,14 +26,14 @@ export function TeamDialog(props: TeamDialogProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-[2px] sm:items-start sm:p-4 sm:pt-[min(10vh,calc(20dvh-1rem))]"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-start sm:p-4 sm:pt-[min(10vh,calc(20dvh-1rem))]"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Team and labels"
-        className="animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col rounded-t-2xl bg-surface shadow-2xl shadow-black/20 ring-1 ring-zinc-200 sm:max-h-[min(84dvh,calc(100dvh-2rem))] sm:rounded-2xl"
+        className="animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col rounded-t-xl border border-zinc-200 bg-surface shadow-2xl shadow-black/25 sm:max-h-[min(84dvh,calc(100dvh-2rem))] sm:rounded-xl"
       >
         <div className="flex shrink-0 items-center justify-between border-b border-zinc-100 px-5 py-3.5">
           <h2 className="text-sm font-semibold text-zinc-900">Team &amp; labels</h2>
@@ -103,7 +103,7 @@ function StarterLabels({ onAdd }: { onAdd: () => Promise<void> }) {
             setBusy(false)
           }
         }}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200 transition hover:bg-indigo-100 disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-md border border-accent/30 bg-accent-soft px-2.5 py-1.5 text-xs font-medium text-accent-fg transition hover:border-accent/50 disabled:opacity-60"
       >
         {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
         Add starter labels (Bug, Feature, Design, Docs)
@@ -195,7 +195,7 @@ function Section<T extends { id: string; name: string }>({
       </div>
       <p className="-mt-2 mb-3 text-xs text-zinc-500">{hint}</p>
 
-      <form onSubmit={handleSubmit} className="rounded-xl bg-zinc-50 p-2.5 ring-1 ring-zinc-200/70">
+      <form onSubmit={handleSubmit} className="rounded-lg border border-zinc-200 bg-panel p-2.5">
         <div className="flex gap-2">
           <input
             value={name}
@@ -203,12 +203,12 @@ function Section<T extends { id: string; name: string }>({
             placeholder={placeholder}
             maxLength={40}
             aria-label={`New ${title.toLowerCase()} name`}
-            className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-surface px-2.5 py-1.5 text-sm outline-none placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15"
+            className="min-w-0 flex-1 rounded-md border border-zinc-200 bg-surface px-2.5 py-1.5 text-[13px] outline-none placeholder:text-zinc-400 focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
           <button
             type="submit"
             disabled={saving || !name.trim()}
-            className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-md bg-accent px-2.5 text-xs font-medium text-white transition hover:bg-accent-hover disabled:opacity-40"
           >
             {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
             Add
@@ -225,7 +225,7 @@ function Section<T extends { id: string; name: string }>({
               onClick={() => setColor(c)}
               style={{ backgroundColor: c }}
               className={`grid size-5 place-items-center rounded-full transition ${
-                color === c ? 'ring-2 ring-zinc-900 ring-offset-2 ring-offset-zinc-50' : 'hover:scale-110'
+                color === c ? 'ring-2 ring-zinc-900 ring-offset-2 ring-offset-panel' : 'hover:scale-110'
               }`}
             >
               {color === c && <Check className="size-3 text-white" strokeWidth={3} />}
@@ -252,7 +252,7 @@ function Section<T extends { id: string; name: string }>({
               aria-label={`Delete ${item.name}`}
               className={`inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium transition ${
                 confirmId === item.id
-                  ? 'bg-red-600 text-white'
+                  ? 'bg-red-500 text-white'
                   : 'text-zinc-400 opacity-100 hover:bg-red-50 hover:text-red-600 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100'
               }`}
             >

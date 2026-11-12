@@ -9,6 +9,8 @@ export interface Task {
   priority: Priority
   due_date: string | null // YYYY-MM-DD
   position: number
+  /** Per-guest sequence for the short key (TB-12); null until the migration has run */
+  number: number | null
   user_id: string
   created_at: string
   updated_at: string
@@ -68,4 +70,8 @@ export interface Activity {
     member?: string | null
   }
   created_at: string
+}
+
+export function taskKey(task: Pick<Task, 'number'>): string | null {
+  return task.number ? `TB-${task.number}` : null
 }

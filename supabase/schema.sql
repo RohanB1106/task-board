@@ -15,6 +15,7 @@ create table if not exists public.tasks (
               check (priority in ('low', 'normal', 'high')),
   due_date    date,
   position    double precision not null default 0,  -- order within a column
+  number      integer,                               -- per-guest key: TB-<number>
   user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
@@ -201,3 +202,25 @@ create trigger assignees_activity after insert or delete on public.task_assignee
 -- Trigger functions are not meant to be called directly
 revoke execute on function public.log_task_activity()     from public, anon, authenticated;
 revoke execute on function public.log_assignee_activity() from public, anon, authenticated;
+
+-- =====================================================================
+-- Per-guest task numbers (TB-1, TB-2, ...)
+-- =====================================================================
+-- New tasks get the next number for that guest. Always assigned by the
+-- database, so clients can't choose their own.
+create or replace function public.assign_task_number() returns trigger
+language plpgsql set search_path = public as $$
+begin
+  -- Serialise inserts per guest so two tabs can't grab the same number
+  perform pg_advisory_xact_lock(hashtext(new.user_id::text));
+  select coalesce(max(number), 0) + 1 into new.number from tasks where user_id = new.user_id;
+  return new;
+end $$;
+
+drop trigger if exists tasks_number on public.tasks;
+create trigger tasks_number before insert on public.tasks
+  for each row execute function public.assign_task_number();
+
+revoke execute on function public.assign_task_number() from public, anon, authenticated;
+
+create unique index if not exists tasks_user_number_idx on public.tasks (user_id, number);

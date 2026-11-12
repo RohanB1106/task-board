@@ -17,6 +17,7 @@ import { useMemo, useState } from 'react'
 import { COLUMNS, POSITION_STEP } from '../lib/constants'
 import type { Status, Task } from '../lib/types'
 import { Column } from './Column'
+import { StatusIcon } from './icons'
 import { TaskCardBody } from './TaskCard'
 
 type ColumnMap = Record<Status, string[]>
@@ -135,7 +136,7 @@ export function Board({ tasks, filtering = false, onMove, onAdd, onOpen }: Board
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className="scroll-thin flex h-full snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:snap-none sm:px-6 lg:gap-4">
+      <div className="scroll-thin flex h-full snap-x snap-mandatory gap-3 overflow-x-auto px-3 pt-2 pb-3 sm:snap-none sm:px-4">
         {COLUMNS.map((column) => (
           <Column
             key={column.id}
@@ -149,9 +150,9 @@ export function Board({ tasks, filtering = false, onMove, onAdd, onOpen }: Board
         ))}
       </div>
 
-      <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
+      <DragOverlay dropAnimation={{ duration: 160, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
         {activeTask ? (
-          <div className="cursor-grabbing">
+          <div className="w-[min(276px,80vw)] cursor-grabbing">
             <TaskCardBody task={activeTask} lifted />
           </div>
         ) : null}
@@ -163,20 +164,21 @@ export function Board({ tasks, filtering = false, onMove, onAdd, onOpen }: Board
 export function BoardSkeleton() {
   const counts = [3, 2, 1, 2]
   return (
-    <div className="flex h-full gap-3 overflow-hidden px-4 sm:px-6 lg:gap-4" aria-busy="true" aria-label="Loading tasks">
+    <div className="flex h-full gap-3 overflow-hidden px-3 pt-2 sm:px-4" aria-busy="true" aria-label="Loading tasks">
       {COLUMNS.map((column, i) => (
-        <div
-          key={column.id}
-          className="flex w-[85vw] max-w-[320px] flex-none flex-col gap-2 self-start rounded-xl bg-zinc-100/80 p-3 ring-1 ring-zinc-200/60 sm:w-[300px] lg:w-auto lg:max-w-none lg:min-w-[260px] lg:flex-1"
-        >
-          <div className="mb-1 flex items-center gap-2">
-            <span className={`size-2 rounded-full ${column.dot}`} />
-            <span className="text-[13px] font-semibold text-zinc-400">{column.title}</span>
+        <div key={column.id} className="flex w-[min(284px,82vw)] shrink-0 flex-col gap-1.5">
+          <div className="flex h-9 items-center gap-2 px-1.5">
+            <StatusIcon status={column.id} />
+            <span className="text-[13px] font-medium text-zinc-400">{column.title}</span>
           </div>
           {Array.from({ length: counts[i] }, (_, j) => (
-            <div key={j} className="animate-pulse rounded-lg border border-zinc-200/70 bg-surface p-3">
-              <div className="h-3 w-3/4 rounded bg-zinc-200" />
-              <div className="mt-2 h-2.5 w-1/2 rounded bg-zinc-100" />
+            <div key={j} className="mx-1 animate-pulse rounded-md border border-zinc-200 bg-surface px-3 py-2.5">
+              <div className="h-2.5 w-10 rounded bg-zinc-100" />
+              <div className="mt-2 h-3 w-4/5 rounded bg-zinc-200" />
+              <div className="mt-2.5 flex gap-1">
+                <div className="h-4 w-6 rounded bg-zinc-100" />
+                <div className="h-4 w-12 rounded bg-zinc-100" />
+              </div>
             </div>
           ))}
         </div>

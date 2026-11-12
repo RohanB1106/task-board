@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 
 export type ThemeChoice = 'system' | 'light' | 'dark'
 
@@ -12,25 +12,35 @@ function readChoice(): ThemeChoice {
   return 'system'
 }
 
+// One shared store so every theme switch on screen stays in sync
+let current: ThemeChoice = readChoice()
+const listeners = new Set<() => void>()
+
+function apply(choice: ThemeChoice) {
+  const root = document.documentElement
+  if (choice === 'system') delete root.dataset.theme
+  else root.dataset.theme = choice
+  try {
+    if (choice === 'system') localStorage.removeItem('theme')
+    else localStorage.setItem('theme', choice)
+  } catch {
+    // ignore
+  }
+}
+
+function setChoice(choice: ThemeChoice) {
+  current = choice
+  apply(choice)
+  listeners.forEach((l) => l())
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
 /** Light / dark / follow-the-system, remembered per browser. */
 export function useTheme() {
-  const [choice, setChoice] = useState<ThemeChoice>(readChoice)
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (choice === 'system') delete root.dataset.theme
-    else root.dataset.theme = choice
-    try {
-      if (choice === 'system') localStorage.removeItem('theme')
-      else localStorage.setItem('theme', choice)
-    } catch {
-      // ignore
-    }
-  }, [choice])
-
-  const cycle = useCallback(() => {
-    setChoice((c) => (c === 'system' ? 'light' : c === 'light' ? 'dark' : 'system'))
-  }, [])
-
-  return { choice, cycle }
+  const choice = useSyncExternalStore(subscribe, () => current)
+  return { choice, setChoice }
 }

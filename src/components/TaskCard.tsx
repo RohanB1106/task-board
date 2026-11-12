@@ -1,25 +1,39 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { AlignLeft, CalendarDays, SignalHigh, SignalLow, SignalMedium } from 'lucide-react'
+import { AlignLeft, CalendarDays } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { dueInfo, type DueTone } from '../lib/dates'
-import type { Priority, Task } from '../lib/types'
+import { taskKey, type Task } from '../lib/types'
 import { pick, useWorkspace } from '../lib/workspace'
-import { AvatarStack, LabelChip } from './Avatar'
+import { AvatarStack } from './Avatar'
+import { PriorityIcon } from './icons'
 
 const DUE_STYLES: Record<DueTone, string> = {
-  overdue: 'bg-red-50 text-red-700 ring-red-200',
-  today: 'bg-amber-50 text-amber-800 ring-amber-200',
-  soon: 'bg-amber-50/60 text-amber-700 ring-amber-100',
-  later: 'bg-zinc-50 text-zinc-600 ring-zinc-200',
-  done: 'bg-zinc-50 text-zinc-400 ring-zinc-200',
+  overdue: 'border-red-200 bg-red-50 text-red-700',
+  today: 'border-amber-200 bg-amber-50 text-amber-800',
+  soon: 'border-zinc-200 text-amber-700',
+  later: 'border-zinc-200 text-zinc-600',
+  done: 'border-zinc-200 text-zinc-400',
 }
 
-export function PriorityIcon({ priority, className = '' }: { priority: Priority; className?: string }) {
-  if (priority === 'high')
-    return <SignalHigh aria-label="High priority" className={`size-4 text-red-500 ${className}`} />
-  if (priority === 'low')
-    return <SignalLow aria-label="Low priority" className={`size-4 text-zinc-400 ${className}`} />
-  return <SignalMedium aria-label="Normal priority" className={`size-4 text-zinc-500 ${className}`} />
+/** Small bordered property pill, as on Linear cards. */
+function Pill({
+  children,
+  className = 'border-zinc-200 text-zinc-600',
+  title,
+}: {
+  children: ReactNode
+  className?: string
+  title?: string
+}) {
+  return (
+    <span
+      title={title}
+      className={`inline-flex h-5 max-w-full items-center gap-1 rounded border px-1.5 text-[11px] font-medium whitespace-nowrap ${className}`}
+    >
+      {children}
+    </span>
+  )
 }
 
 /** The visual card, shared by the in-column card and the drag overlay. */
@@ -29,56 +43,45 @@ export function TaskCardBody({ task, lifted = false }: { task: Task; lifted?: bo
   const { membersById, labelsById } = useWorkspace()
   const assignees = pick(task.assignee_ids, membersById)
   const labels = pick(task.label_ids, labelsById)
-  const hasFooter = Boolean(due || task.description || assignees.length)
+  const key = taskKey(task)
 
   return (
     <div
-      className={[
-        'rounded-lg border bg-surface p-3 text-left transition-[box-shadow,border-color]',
+      className={`rounded-md border bg-surface px-3 py-2.5 text-left transition-[border-color,box-shadow] ${
         lifted
-          ? 'rotate-[1.5deg] border-zinc-300 shadow-xl shadow-black/10'
-          : 'border-zinc-200/80 shadow-[0_1px_2px_rgba(24,24,27,0.05)] group-hover:border-zinc-300 group-hover:shadow-md group-hover:shadow-black/5',
-      ].join(' ')}
+          ? 'border-zinc-300 shadow-lg shadow-black/10'
+          : 'border-zinc-200 shadow-[0_1px_1px_rgba(0,0,0,0.03)] group-hover:border-zinc-300'
+      }`}
     >
-      <div className="flex items-start gap-2">
-        <p
-          className={`min-w-0 flex-1 text-[13.5px] leading-snug font-medium break-words ${
-            isDone ? 'text-zinc-500' : 'text-zinc-900'
-          }`}
-        >
-          {task.title}
-        </p>
-        <PriorityIcon priority={task.priority} className="mt-px shrink-0" />
-      </div>
+      {key && <p className="mb-1 text-[11.5px] leading-4 text-zinc-500 tabular-nums">{key}</p>}
 
-      {task.description && (
-        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-zinc-500">{task.description}</p>
-      )}
+      <p className={`text-[13px] leading-[1.4] font-medium break-words ${isDone ? 'text-zinc-500' : 'text-zinc-900'}`}>
+        {task.title}
+      </p>
 
-      {labels.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {labels.map((l) => (
-            <LabelChip key={l.id} label={l} />
-          ))}
-        </div>
-      )}
-
-      {hasFooter && (
-        <div className="mt-2.5 flex min-h-5 items-center gap-2">
-          {due && (
-            <span
-              className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${DUE_STYLES[due.tone]}`}
-            >
-              <CalendarDays className="size-3" />
-              {due.label}
-            </span>
-          )}
-          {task.description && <AlignLeft aria-label="Has description" className="size-3.5 text-zinc-300" />}
-          <span className="ml-auto">
+      <div className="mt-2 flex flex-wrap items-center gap-1">
+        <Pill title={`${task.priority[0].toUpperCase()}${task.priority.slice(1)} priority`} className="border-zinc-200 px-1">
+          <PriorityIcon priority={task.priority} size={12} />
+        </Pill>
+        {due && (
+          <Pill className={DUE_STYLES[due.tone]} title={`Due ${task.due_date}`}>
+            <CalendarDays className="size-3" />
+            {due.label}
+          </Pill>
+        )}
+        {labels.map((l) => (
+          <Pill key={l.id}>
+            <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: l.color }} />
+            <span className="truncate">{l.name}</span>
+          </Pill>
+        ))}
+        {task.description && <AlignLeft aria-label="Has description" className="ml-0.5 size-3 text-zinc-400" />}
+        {assignees.length > 0 && (
+          <span className="ml-auto pl-1">
             <AvatarStack members={assignees} />
           </span>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
@@ -102,13 +105,11 @@ export function SortableTaskCard({ task, onOpen }: { task: Task; onOpen: (task: 
         if (e.key === 'o') onOpen(task)
         listeners?.onKeyDown?.(e)
       }}
-      aria-label={`${task.title}. Press space to move, O to open.`}
-      className={`group cursor-grab touch-manipulation rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-100 active:cursor-grabbing ${
-        isDragging ? 'opacity-40' : ''
-      }`}
+      aria-label={`${taskKey(task) ?? ''} ${task.title}. Press space to move, O to open.`}
+      className="group cursor-default touch-manipulation rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-panel"
     >
       {isDragging ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50">
+        <div className="rounded-md border border-dashed border-zinc-300 bg-zinc-100/60">
           <div className="invisible">
             <TaskCardBody task={task} />
           </div>

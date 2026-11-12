@@ -51,24 +51,24 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="true"
-        className={`inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-xs sm:px-2.5 font-medium ring-1 transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+        className={`inline-flex h-7 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
           active
-            ? 'bg-indigo-50 text-indigo-700 ring-indigo-200 hover:bg-indigo-100'
-            : 'bg-surface text-zinc-600 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
+            ? 'border-accent/30 bg-accent-soft text-accent-fg'
+            : 'border-dashed border-zinc-300 text-zinc-600 hover:border-solid hover:bg-surface hover:text-zinc-900'
         }`}
       >
-        <span className={`hidden sm:inline ${active ? 'text-indigo-500' : 'text-zinc-400'}`}>{icon}</span>
+        <span className={active ? 'text-accent-fg' : 'text-zinc-400'}>{icon}</span>
         {label}
         {active && (
-          <span className="rounded-full bg-indigo-600 px-1.5 text-[10px] leading-4 text-white tabular-nums">
+          <span className="rounded bg-accent px-1 text-[10px] leading-4 text-white tabular-nums">
             {selected.length}
           </span>
         )}
-        <ChevronDown className={`size-3.5 transition ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`size-3 opacity-60 transition ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
-        <div className="animate-dialog-in absolute left-0 z-30 mt-1.5 w-56 rounded-xl bg-surface p-1 shadow-lg shadow-black/10 ring-1 ring-zinc-200">
+        <div className="animate-dialog-in absolute left-0 z-30 mt-1 w-56 rounded-lg border border-zinc-200 bg-surface p-1 shadow-lg shadow-black/8">
           {options.length === 0 && <p className="px-2.5 py-2 text-xs text-zinc-500">{emptyText ?? 'Nothing to filter by yet'}</p>}
           {options.map((o) => {
             const checked = selected.includes(o.id)
@@ -79,11 +79,11 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
                 role="menuitemcheckbox"
                 aria-checked={checked}
                 onClick={() => toggle(o.id)}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm text-zinc-700 transition hover:bg-zinc-100"
+                className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-[13px] text-zinc-700 transition hover:bg-zinc-100"
               >
                 <span
                   className={`grid size-4 shrink-0 place-items-center rounded border transition ${
-                    checked ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-zinc-300 bg-surface'
+                    checked ? 'border-accent bg-accent text-white' : 'border-zinc-300 bg-surface'
                   }`}
                 >
                   {checked && <Check className="size-3" strokeWidth={3} />}
@@ -97,7 +97,7 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
             <button
               type="button"
               onClick={() => onChange([])}
-              className="mt-1 w-full rounded-lg border-t border-zinc-100 px-2 py-1.5 text-left text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+              className="mt-1 w-full rounded-md border-t border-zinc-100 px-2 py-1.5 text-left text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
             >
               Clear {label.toLowerCase()} filter
             </button>

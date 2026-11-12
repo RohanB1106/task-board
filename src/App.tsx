@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Board, BoardSkeleton } from './components/Board'
-import { Header } from './components/Header'
 import { ErrorPanel, FullScreenLoader, SetupNotice, Toaster } from './components/StatusScreens'
 import { TaskDialog, type DialogState } from './components/TaskDialog'
 import { TeamDialog } from './components/TeamDialog'
-import { Toolbar } from './components/Toolbar'
+import { FilterBar } from './components/FilterBar'
+import { Sidebar } from './components/Sidebar'
+import { TopBar } from './components/TopBar'
 import { useGuestSession } from './hooks/useGuestSession'
 import { useTasks } from './hooks/useTasks'
 import { useTeam } from './hooks/useTeam'
@@ -27,6 +28,10 @@ function GuestGate() {
   return <Workspace userId={session.userId} />
 }
 
+function toggleId(list: string[], id: string) {
+  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
+}
+
 function isTyping(target: EventTarget | null) {
   return target instanceof HTMLElement && Boolean(target.closest('input, textarea, select, [contenteditable="true"]'))
 }
@@ -38,6 +43,7 @@ function Workspace({ userId }: { userId: string }) {
   const [dialog, setDialog] = useState<DialogState | null>(null)
   const [teamOpen, setTeamOpen] = useState(false)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
+  const [menuOpen, setMenuOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
 
   const { tasks } = board
@@ -69,7 +75,7 @@ function Workspace({ userId }: { userId: string }) {
   // Keyboard shortcuts: N = new task, / = search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (dialog || teamOpen || e.metaKey || e.ctrlKey || e.altKey || isTyping(e.target)) return
+      if (dialog || teamOpen || menuOpen || e.metaKey || e.ctrlKey || e.altKey || isTyping(e.target)) return
       if (e.key.toLowerCase() === 'n') {
         e.preventDefault()
         openCreate()
@@ -80,7 +86,7 @@ function Workspace({ userId }: { userId: string }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [dialog, teamOpen, openCreate])
+  }, [dialog, teamOpen, menuOpen, openCreate])
 
   const handleMove = useCallback(
     (id: string, status: Status, position: number) => {
@@ -93,38 +99,61 @@ function Workspace({ userId }: { userId: string }) {
 
   return (
     <WorkspaceContext.Provider value={lookup}>
-      <div className="flex h-full flex-col">
-        <Header tasks={tasks} userId={userId} onNewTask={() => openCreate()} />
-        <Toolbar
-          ref={searchRef}
-          filters={filters}
-          onChange={setFilters}
+      <div className="flex h-full">
+        <Sidebar
+          userId={userId}
+          tasks={tasks}
           members={team.members}
           labels={team.labels}
-          shown={visibleTasks.length}
-          total={tasks.length}
-          onManageTeam={() => setTeamOpen(true)}
+          filters={filters}
+          onToggleAssignee={(id) => setFilters((f) => ({ ...f, assignees: toggleId(f.assignees, id) }))}
+          onToggleLabel={(id) => setFilters((f) => ({ ...f, labels: toggleId(f.labels, id) }))}
+          onManageTeam={() => {
+            setMenuOpen(false)
+            setTeamOpen(true)
+          }}
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
         />
 
-        <main className="min-h-0 flex-1">
-          {board.loadState === 'loading' && <BoardSkeleton />}
-          {board.loadState === 'error' && (
-            <ErrorPanel
-              title="Couldn't load your tasks"
-              message={board.loadError ?? 'Unknown error'}
-              onRetry={board.reload}
-            />
-          )}
-          {board.loadState === 'ready' && (
-            <Board
-              tasks={visibleTasks}
-              filtering={filtering}
-              onMove={handleMove}
-              onAdd={openCreate}
-              onOpen={openEdit}
-            />
-          )}
-        </main>
+        {/* Main panel: inset with a border on large screens, like Linear */}
+        <div className="flex min-w-0 flex-1 flex-col bg-panel lg:my-2 lg:mr-2 lg:overflow-hidden lg:rounded-lg lg:border lg:border-zinc-200 lg:shadow-xs">
+          <TopBar
+            ref={searchRef}
+            search={filters.search}
+            onSearch={(search) => setFilters((f) => ({ ...f, search }))}
+            onNewTask={() => openCreate()}
+            onOpenMenu={() => setMenuOpen(true)}
+          />
+          <FilterBar
+            filters={filters}
+            onChange={setFilters}
+            members={team.members}
+            labels={team.labels}
+            shown={visibleTasks.length}
+            total={tasks.length}
+          />
+
+          <main className="min-h-0 flex-1">
+            {board.loadState === 'loading' && <BoardSkeleton />}
+            {board.loadState === 'error' && (
+              <ErrorPanel
+                title="Couldn't load your tasks"
+                message={board.loadError ?? 'Unknown error'}
+                onRetry={board.reload}
+              />
+            )}
+            {board.loadState === 'ready' && (
+              <Board
+                tasks={visibleTasks}
+                filtering={filtering}
+                onMove={handleMove}
+                onAdd={openCreate}
+                onOpen={openEdit}
+              />
+            )}
+          </main>
+        </div>
 
         {liveDialog && (
           <TaskDialog

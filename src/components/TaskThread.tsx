@@ -10,7 +10,7 @@ import {
   UserMinus,
   UserPlus,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useTaskThread } from '../hooks/useTaskThread'
 import { STATUS_LABEL } from '../lib/constants'
 import { formatFull, timeAgo } from '../lib/dates'
@@ -68,7 +68,6 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const listRef = useRef<HTMLDivElement>(null)
 
   const feed = useMemo<FeedItem[]>(
     () =>
@@ -78,13 +77,6 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
       ].sort((a, b) => a.item.created_at.localeCompare(b.item.created_at)),
     [activity, comments],
   )
-
-  // Keep the newest entry in view, scrolling only the timeline itself
-  // (scrollIntoView would also scroll the whole dialog on small screens)
-  useEffect(() => {
-    const el = listRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [feed.length])
 
   async function send() {
     const body = draft.trim()
@@ -102,10 +94,10 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex items-center gap-2 px-5 pt-4 pb-2">
-        <MessageSquare className="size-4 text-zinc-400" />
-        <h3 className="text-xs font-semibold tracking-wide text-zinc-500 uppercase">Activity</h3>
+    <div>
+      <div className="mb-3 flex items-center gap-2">
+        <MessageSquare className="size-3.5 text-zinc-400" />
+        <h3 className="text-[13px] font-medium text-zinc-900">Activity</h3>
         {comments.length > 0 && (
           <span className="text-xs text-zinc-400 tabular-nums">
             · {comments.length} comment{comments.length === 1 ? '' : 's'}
@@ -113,7 +105,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
         )}
       </div>
 
-      <div ref={listRef} className="scroll-thin min-h-32 flex-1 overflow-y-auto px-5 pb-3">
+      <div>
         {state === 'loading' && (
           <div className="space-y-3 pt-1" aria-busy="true">
             {[0, 1, 2].map((i) => (
@@ -126,7 +118,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
         )}
 
         {state === 'error' && (
-          <div className="rounded-lg bg-red-50 p-3 text-xs text-red-700 ring-1 ring-red-200">
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
             Couldn't load activity.{' '}
             <button type="button" onClick={retry} className="inline-flex items-center gap-1 font-medium underline">
               <RotateCw className="size-3" /> Retry
@@ -148,8 +140,8 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
       </div>
 
       {/* Not a <form>: this lives inside the task dialog's form, and forms can't nest */}
-      <div className="shrink-0 border-t border-zinc-100 p-3">
-        <div className="rounded-xl border border-zinc-200 bg-surface shadow-xs transition focus-within:border-indigo-400 focus-within:ring-3 focus-within:ring-indigo-500/15">
+      <div className="mt-4">
+        <div className="rounded-lg border border-zinc-200 bg-surface transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20">
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -163,7 +155,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
             maxLength={2000}
             placeholder="Leave a comment…"
             aria-label="Comment"
-            className="block w-full resize-none rounded-xl bg-transparent px-3 pt-2.5 text-sm outline-none placeholder:text-zinc-400"
+            className="block w-full resize-none rounded-lg bg-transparent px-3 pt-2.5 text-[13px] outline-none placeholder:text-zinc-400"
           />
           <div className="flex items-center justify-between px-2 pb-2">
             <span className="pl-1 text-[11px] text-zinc-400">⌘↵ to send</span>
@@ -171,7 +163,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
               type="button"
               onClick={() => void send()}
               disabled={!draft.trim() || sending}
-              className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-40"
+              className="inline-flex h-6 items-center gap-1 rounded-md bg-accent px-2 text-xs font-medium text-white transition hover:bg-accent-hover disabled:opacity-40"
             >
               {sending ? <Loader2 className="size-3.5 animate-spin" /> : <SendHorizontal className="size-3.5" />}
               Comment
@@ -188,7 +180,7 @@ function ActivityRow({ activity }: { activity: Activity }) {
   const { icon, text } = describe(activity)
   return (
     <li className="relative flex items-start gap-2.5 text-xs text-zinc-500">
-      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-zinc-50 text-zinc-400 ring-1 ring-zinc-200">
+      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-surface text-zinc-400 ring-1 ring-zinc-200">
         {icon}
       </span>
       <p className="pt-0.5 leading-relaxed">
@@ -206,10 +198,10 @@ function CommentRow({ comment, onDelete }: { comment: Comment; onDelete: (id: st
   const [deleting, setDeleting] = useState(false)
   return (
     <li className="group relative flex items-start gap-2.5">
-      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-indigo-600 text-[9px] font-semibold text-white ring-2 ring-surface">
+      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-zinc-700 text-[9px] font-semibold text-surface ring-2 ring-surface">
         Y
       </span>
-      <div className="min-w-0 flex-1 rounded-xl bg-surface px-3 py-2 ring-1 ring-zinc-200">
+      <div className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-surface px-3 py-2">
         <div className="flex items-center gap-2 text-xs">
           <span className="font-medium text-zinc-800">You</span>
           <span className="text-zinc-400" title={formatFull(comment.created_at)}>
