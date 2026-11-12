@@ -51,13 +51,13 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="true"
-        className={`inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium ring-1 transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+        className={`inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-xs sm:px-2.5 font-medium ring-1 transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
           active
             ? 'bg-indigo-50 text-indigo-700 ring-indigo-200 hover:bg-indigo-100'
-            : 'bg-white text-zinc-600 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
+            : 'bg-surface text-zinc-600 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
         }`}
       >
-        <span className={active ? 'text-indigo-500' : 'text-zinc-400'}>{icon}</span>
+        <span className={`hidden sm:inline ${active ? 'text-indigo-500' : 'text-zinc-400'}`}>{icon}</span>
         {label}
         {active && (
           <span className="rounded-full bg-indigo-600 px-1.5 text-[10px] leading-4 text-white tabular-nums">
@@ -68,7 +68,7 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
       </button>
 
       {open && (
-        <div className="animate-dialog-in absolute left-0 z-30 mt-1.5 w-56 rounded-xl bg-white p-1 shadow-lg shadow-zinc-900/10 ring-1 ring-zinc-200">
+        <div className="animate-dialog-in absolute left-0 z-30 mt-1.5 w-56 rounded-xl bg-surface p-1 shadow-lg shadow-black/10 ring-1 ring-zinc-200">
           {options.length === 0 && <p className="px-2.5 py-2 text-xs text-zinc-500">{emptyText ?? 'Nothing to filter by yet'}</p>}
           {options.map((o) => {
             const checked = selected.includes(o.id)
@@ -83,7 +83,7 @@ export function FilterMenu({ label, icon, options, selected, onChange, emptyText
               >
                 <span
                   className={`grid size-4 shrink-0 place-items-center rounded border transition ${
-                    checked ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-zinc-300 bg-white'
+                    checked ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-zinc-300 bg-surface'
                   }`}
                 >
                   {checked && <Check className="size-3" strokeWidth={3} />}

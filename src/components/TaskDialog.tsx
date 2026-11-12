@@ -22,7 +22,7 @@ interface TaskDialogProps {
 }
 
 const fieldClass =
-  'w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-xs outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15'
+  'w-full rounded-lg border border-zinc-200 bg-surface px-3 py-2 text-sm text-zinc-900 shadow-xs outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15'
 
 const labelClass = 'mb-1.5 block text-xs font-medium text-zinc-600'
 
@@ -176,7 +176,7 @@ export function TaskDialog({
             <label
               key={p.id}
               className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition has-focus-visible:ring-2 has-focus-visible:ring-indigo-500 ${
-                priority === p.id ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500 hover:text-zinc-800'
+                priority === p.id ? 'bg-surface text-zinc-900 shadow-sm' : 'text-zinc-500 hover:text-zinc-800'
               }`}
             >
               <input
@@ -242,7 +242,7 @@ export function TaskDialog({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-zinc-950/30 backdrop-blur-[2px] sm:items-start sm:p-4 sm:pt-[min(8vh,calc(20dvh-1rem))]"
+      className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-[2px] sm:items-start sm:p-4 sm:pt-[min(8vh,calc(20dvh-1rem))]"
       onMouseDown={(e) => e.target === e.currentTarget && !busy && onClose()}
     >
       <form
@@ -250,7 +250,7 @@ export function TaskDialog({
         aria-modal="true"
         aria-labelledby={`${ids}-heading`}
         onSubmit={handleSubmit}
-        className={`animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-2xl bg-white shadow-2xl shadow-zinc-950/20 ring-1 ring-zinc-200 sm:max-h-[min(86dvh,calc(100dvh-2rem))] sm:rounded-2xl ${
+        className={`animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-2xl bg-surface shadow-2xl shadow-black/20 ring-1 ring-zinc-200 sm:max-h-[min(86dvh,calc(100dvh-2rem))] sm:rounded-2xl ${
           existing ? 'max-w-4xl' : 'max-w-lg'
         }`}
       >
@@ -380,7 +380,7 @@ function ToggleChip({
       className={`inline-flex items-center gap-1.5 rounded-full py-0.5 pr-2.5 pl-1 text-xs font-medium ring-1 transition ${
         selected
           ? 'bg-indigo-50 text-indigo-800 ring-indigo-300'
-          : 'bg-white text-zinc-600 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
+          : 'bg-surface text-zinc-600 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
       }`}
     >
       {children}

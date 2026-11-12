@@ -2,6 +2,76 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Raised surfaces: cards, dialogs, inputs, menus */
+  --color-surface: #ffffff;
+}
+
+/*
+ * Dark theme. Instead of sprinkling dark: variants everywhere, the neutral
+ * scale and the light accent tints are re-mapped, so every component that
+ * uses zinc / surface / tinted backgrounds adapts automatically.
+ * Applies when the OS is dark (unless the user picked light), or when
+ * the user explicitly picked dark.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-surface: #1b1b1f;
+    --color-zinc-50: #0d0d10;
+    --color-zinc-100: #16161a;
+    --color-zinc-200: #2a2a30;
+    --color-zinc-300: #3b3b42;
+    --color-zinc-400: #62626b;
+    --color-zinc-500: #8c8c95;
+    --color-zinc-600: #a9a9b2;
+    --color-zinc-700: #c8c8cf;
+    --color-zinc-800: #e1e1e6;
+    --color-zinc-900: #f1f1f3;
+    --color-zinc-950: #fafafa;
+    --color-indigo-50: #1f1d3d;
+    --color-indigo-100: #28254f;
+    --color-indigo-200: #3b3775;
+    --color-indigo-300: #5049a3;
+    --color-indigo-700: #b4bdfd;
+    --color-indigo-800: #cfd6fe;
+    --color-red-50: #2b1517;
+    --color-red-200: #5e2629;
+    --color-red-700: #fca5a5;
+    --color-amber-50: #2a2010;
+    --color-amber-100: #3a2b12;
+    --color-amber-200: #5b4416;
+    --color-amber-700: #fcd34d;
+    --color-amber-800: #fde68a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+    --color-surface: #1b1b1f;
+    --color-zinc-50: #0d0d10;
+    --color-zinc-100: #16161a;
+    --color-zinc-200: #2a2a30;
+    --color-zinc-300: #3b3b42;
+    --color-zinc-400: #62626b;
+    --color-zinc-500: #8c8c95;
+    --color-zinc-600: #a9a9b2;
+    --color-zinc-700: #c8c8cf;
+    --color-zinc-800: #e1e1e6;
+    --color-zinc-900: #f1f1f3;
+    --color-zinc-950: #fafafa;
+    --color-indigo-50: #1f1d3d;
+    --color-indigo-100: #28254f;
+    --color-indigo-200: #3b3775;
+    --color-indigo-300: #5049a3;
+    --color-indigo-700: #b4bdfd;
+    --color-indigo-800: #cfd6fe;
+    --color-red-50: #2b1517;
+    --color-red-200: #5e2629;
+    --color-red-700: #fca5a5;
+    --color-amber-50: #2a2010;
+    --color-amber-100: #3a2b12;
+    --color-amber-200: #5b4416;
+    --color-amber-700: #fcd34d;
+    --color-amber-800: #fde68a;
 }
 
 html,
@@ -13,12 +83,13 @@ body,
 body {
   @apply bg-zinc-50 text-zinc-900 antialiased;
   font-feature-settings: "cv11", "ss01";
+  transition: background-color 150ms ease;
 }
 
 /* Slim, unobtrusive scrollbars for the board */
 .scroll-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgb(212 212 216) transparent;
+  scrollbar-color: var(--color-zinc-300) transparent;
 }
 
 @keyframes toast-in {
@@ -32,3 +103,8 @@ body {
   to { opacity: 1; transform: none; }
 }
 .animate-dialog-in { animation: dialog-in 160ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-in,
+  .animate-dialog-in { animation: none; }
+}

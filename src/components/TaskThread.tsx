@@ -68,7 +68,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const endRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
 
   const feed = useMemo<FeedItem[]>(
     () =>
@@ -79,8 +79,11 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
     [activity, comments],
   )
 
+  // Keep the newest entry in view, scrolling only the timeline itself
+  // (scrollIntoView would also scroll the whole dialog on small screens)
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: 'nearest' })
+    const el = listRef.current
+    if (el) el.scrollTop = el.scrollHeight
   }, [feed.length])
 
   async function send() {
@@ -110,7 +113,7 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
         )}
       </div>
 
-      <div className="scroll-thin min-h-32 flex-1 overflow-y-auto px-5 pb-3">
+      <div ref={listRef} className="scroll-thin min-h-32 flex-1 overflow-y-auto px-5 pb-3">
         {state === 'loading' && (
           <div className="space-y-3 pt-1" aria-busy="true">
             {[0, 1, 2].map((i) => (
@@ -142,12 +145,11 @@ export function TaskThread({ taskId, refreshKey }: { taskId: string; refreshKey:
             )}
           </ol>
         )}
-        <div ref={endRef} />
       </div>
 
       {/* Not a <form>: this lives inside the task dialog's form, and forms can't nest */}
       <div className="shrink-0 border-t border-zinc-100 p-3">
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-xs transition focus-within:border-indigo-400 focus-within:ring-3 focus-within:ring-indigo-500/15">
+        <div className="rounded-xl border border-zinc-200 bg-surface shadow-xs transition focus-within:border-indigo-400 focus-within:ring-3 focus-within:ring-indigo-500/15">
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -204,10 +206,10 @@ function CommentRow({ comment, onDelete }: { comment: Comment; onDelete: (id: st
   const [deleting, setDeleting] = useState(false)
   return (
     <li className="group relative flex items-start gap-2.5">
-      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-indigo-600 text-[9px] font-semibold text-white ring-2 ring-white">
+      <span className="z-10 grid size-5 shrink-0 place-items-center rounded-full bg-indigo-600 text-[9px] font-semibold text-white ring-2 ring-surface">
         Y
       </span>
-      <div className="min-w-0 flex-1 rounded-xl bg-white px-3 py-2 ring-1 ring-zinc-200">
+      <div className="min-w-0 flex-1 rounded-xl bg-surface px-3 py-2 ring-1 ring-zinc-200">
         <div className="flex items-center gap-2 text-xs">
           <span className="font-medium text-zinc-800">You</span>
           <span className="text-zinc-400" title={formatFull(comment.created_at)}>

@@ -174,7 +174,7 @@ export function BoardSkeleton() {
             <span className="text-[13px] font-semibold text-zinc-400">{column.title}</span>
           </div>
           {Array.from({ length: counts[i] }, (_, j) => (
-            <div key={j} className="animate-pulse rounded-lg border border-zinc-200/70 bg-white p-3">
+            <div key={j} className="animate-pulse rounded-lg border border-zinc-200/70 bg-surface p-3">
               <div className="h-3 w-3/4 rounded bg-zinc-200" />
               <div className="mt-2 h-2.5 w-1/2 rounded bg-zinc-100" />
             </div>

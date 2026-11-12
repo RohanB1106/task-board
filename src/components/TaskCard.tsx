@@ -34,10 +34,10 @@ export function TaskCardBody({ task, lifted = false }: { task: Task; lifted?: bo
   return (
     <div
       className={[
-        'rounded-lg border bg-white p-3 text-left transition-[box-shadow,border-color]',
+        'rounded-lg border bg-surface p-3 text-left transition-[box-shadow,border-color]',
         lifted
-          ? 'rotate-[1.5deg] border-zinc-300 shadow-xl shadow-zinc-900/10'
-          : 'border-zinc-200/80 shadow-[0_1px_2px_rgba(24,24,27,0.05)] group-hover:border-zinc-300 group-hover:shadow-md group-hover:shadow-zinc-900/5',
+          ? 'rotate-[1.5deg] border-zinc-300 shadow-xl shadow-black/10'
+          : 'border-zinc-200/80 shadow-[0_1px_2px_rgba(24,24,27,0.05)] group-hover:border-zinc-300 group-hover:shadow-md group-hover:shadow-black/5',
       ].join(' ')}
     >
       <div className="flex items-start gap-2">

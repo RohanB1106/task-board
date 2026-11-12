@@ -26,14 +26,14 @@ export function TeamDialog(props: TeamDialogProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-zinc-950/30 backdrop-blur-[2px] sm:items-start sm:p-4 sm:pt-[min(10vh,calc(20dvh-1rem))]"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-[2px] sm:items-start sm:p-4 sm:pt-[min(10vh,calc(20dvh-1rem))]"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Team and labels"
-        className="animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col rounded-t-2xl bg-white shadow-2xl shadow-zinc-950/20 ring-1 ring-zinc-200 sm:max-h-[min(84dvh,calc(100dvh-2rem))] sm:rounded-2xl"
+        className="animate-dialog-in flex max-h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col rounded-t-2xl bg-surface shadow-2xl shadow-black/20 ring-1 ring-zinc-200 sm:max-h-[min(84dvh,calc(100dvh-2rem))] sm:rounded-2xl"
       >
         <div className="flex shrink-0 items-center justify-between border-b border-zinc-100 px-5 py-3.5">
           <h2 className="text-sm font-semibold text-zinc-900">Team &amp; labels</h2>
@@ -139,7 +139,10 @@ function Section<T extends { id: string; name: string }>({
   empty,
 }: SectionProps<T>) {
   const [name, setName] = useState('')
-  const [color, setColor] = useState(() => nextSwatch(usedColors))
+  // Until the user picks a swatch, default to the first colour not in use yet
+  const [picked, setPicked] = useState<string | null>(null)
+  const color = picked ?? nextSwatch(usedColors)
+  const setColor = setPicked
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
@@ -158,7 +161,7 @@ function Section<T extends { id: string; name: string }>({
     try {
       await onCreate(trimmed, color)
       setName('')
-      setColor(nextSwatch([...usedColors, color]))
+      setPicked(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save')
     } finally {
@@ -200,12 +203,12 @@ function Section<T extends { id: string; name: string }>({
             placeholder={placeholder}
             maxLength={40}
             aria-label={`New ${title.toLowerCase()} name`}
-            className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-sm outline-none placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15"
+            className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-surface px-2.5 py-1.5 text-sm outline-none placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15"
           />
           <button
             type="submit"
             disabled={saving || !name.trim()}
-            className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 px-2.5 text-xs font-medium text-white transition hover:bg-zinc-700 disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-40"
           >
             {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
             Add

@@ -34,6 +34,9 @@ Security makes sure guests only ever see their own tasks.
 - **Search and filters:** search by title or description, and filter by priority,
   assignee (including "Unassigned") and label, with an "X of Y" count
 - **Board stats:** total, done and overdue counts in the header
+- **Dark mode:** follows the system by default, with a toggle (system / light / dark)
+  that's remembered per browser
+- **Responsive:** columns snap-scroll on phones, and dialogs become bottom sheets
 - **Keyboard:** `N` new task, `/` search, `Esc` to close; cards can be moved with
   the keyboard
 

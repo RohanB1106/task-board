@@ -15,7 +15,7 @@ export function FullScreenLoader({ label }: { label: string }) {
 export function ErrorPanel({ title, message, onRetry }: { title: string; message: string; onRetry: () => void }) {
   return (
     <div className="grid h-full place-items-center p-6">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-zinc-200">
+      <div className="w-full max-w-sm rounded-2xl bg-surface p-6 text-center shadow-sm ring-1 ring-zinc-200">
         <div className="mx-auto grid size-10 place-items-center rounded-full bg-red-50 text-red-500">
           <AlertTriangle className="size-5" />
         </div>
@@ -24,7 +24,7 @@ export function ErrorPanel({ title, message, onRetry }: { title: string; message
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-zinc-700"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-indigo-500"
         >
           <RotateCw className="size-3.5" /> Try again
         </button>
@@ -36,7 +36,7 @@ export function ErrorPanel({ title, message, onRetry }: { title: string; message
 export function SetupNotice() {
   return (
     <div className="grid h-full place-items-center p-6">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-200">
+      <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-zinc-200">
         <div className="grid size-10 place-items-center rounded-full bg-indigo-50 text-indigo-600">
           <KeyRound className="size-5" />
         </div>
@@ -60,7 +60,7 @@ export function Toaster({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
       {toasts.map((t) => (
         <div
           key={t.id}
-          className="animate-toast-in pointer-events-auto flex max-w-sm items-start gap-2.5 rounded-xl bg-zinc-900 px-3.5 py-2.5 text-sm text-white shadow-lg shadow-zinc-900/20"
+          className="animate-toast-in pointer-events-auto flex max-w-sm items-start gap-2.5 rounded-xl bg-neutral-900 px-3.5 py-2.5 text-sm text-white ring-1 ring-white/10 shadow-lg shadow-black/20"
         >
           {t.tone === 'error' ? (
             <AlertTriangle className="mt-0.5 size-4 shrink-0 text-red-400" />
@@ -71,7 +71,7 @@ export function Toaster({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
           <button
             type="button"
             onClick={() => onDismiss(t.id)}
-            className="text-zinc-400 hover:text-white"
+            className="text-neutral-400 hover:text-white"
             aria-label="Dismiss"
           >
             <X className="size-4" />

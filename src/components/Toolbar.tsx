@@ -41,7 +41,7 @@ export const Toolbar = forwardRef<HTMLInputElement, ToolbarProps>(function Toolb
           }}
           placeholder="Search tasks…"
           aria-label="Search tasks by title"
-          className="h-8 w-full rounded-lg border border-zinc-200 bg-white pr-8 pl-8 text-sm shadow-xs outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15 [&::-webkit-search-cancel-button]:hidden"
+          className="h-8 w-full rounded-lg border border-zinc-200 bg-surface pr-8 pl-8 text-sm shadow-xs outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-500/15 [&::-webkit-search-cancel-button]:hidden"
         />
         {filters.search ? (
           <button
@@ -107,10 +107,12 @@ export const Toolbar = forwardRef<HTMLInputElement, ToolbarProps>(function Toolb
       <button
         type="button"
         onClick={onManageTeam}
-        className="ml-auto inline-flex h-8 items-center gap-2 rounded-lg bg-white px-2.5 text-xs font-medium text-zinc-600 ring-1 ring-zinc-200 transition hover:bg-zinc-50 hover:text-zinc-900"
+        aria-label="Team and labels"
+        title="Team & labels"
+        className="ml-auto inline-flex h-8 items-center gap-2 rounded-lg bg-surface px-2 text-xs sm:px-2.5 font-medium text-zinc-600 ring-1 ring-zinc-200 transition hover:bg-zinc-50 hover:text-zinc-900"
       >
         {members.length > 0 ? <AvatarStack members={members} max={4} /> : <Settings2 className="size-3.5 text-zinc-400" />}
-        Team &amp; labels
+        <span className="hidden sm:inline">Team &amp; labels</span>
       </button>
     </div>
   )

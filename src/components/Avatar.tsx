@@ -21,7 +21,7 @@ export function Avatar({
       title={member.name}
       style={{ backgroundColor: member.color }}
       className={`inline-grid shrink-0 place-items-center rounded-full font-semibold tracking-tight text-white select-none ${SIZES[size]} ${
-        ring ? 'ring-2 ring-white' : ''
+        ring ? 'ring-2 ring-surface' : ''
       }`}
     >
       {initials(member.name)}
@@ -49,7 +49,7 @@ export function AvatarStack({
       ))}
       {extra > 0 && (
         <span
-          className={`inline-grid place-items-center rounded-full bg-zinc-200 font-semibold text-zinc-600 ring-2 ring-white ${SIZES[size]}`}
+          className={`inline-grid place-items-center rounded-full bg-zinc-200 font-semibold text-zinc-600 ring-2 ring-surface ${SIZES[size]}`}
         >
           +{extra}
         </span>
@@ -61,7 +61,7 @@ export function AvatarStack({
 export function LabelChip({ label, className = '' }: { label: Pick<Label, 'name' | 'color'>; className?: string }) {
   return (
     <span
-      className={`inline-flex max-w-full items-center gap-1 rounded-full bg-white px-1.5 py-px text-[11px] font-medium text-zinc-700 ring-1 ring-zinc-200 ring-inset ${className}`}
+      className={`inline-flex max-w-full items-center gap-1 rounded-full bg-surface px-1.5 py-px text-[11px] font-medium text-zinc-700 ring-1 ring-zinc-200 ring-inset ${className}`}
     >
       <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: label.color }} />
       <span className="truncate">{label.name}</span>

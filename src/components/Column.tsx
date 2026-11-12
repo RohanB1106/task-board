@@ -57,7 +57,7 @@ export function Column({ column, tasks, onAdd, onOpen, isDragging, filtering }: 
               onClick={() => onAdd(column.id)}
               className={`flex min-h-24 flex-1 flex-col items-center justify-center gap-1 rounded-lg border border-dashed px-3 text-center text-xs transition ${
                 isDragging
-                  ? 'border-indigo-300 bg-white/60 text-indigo-600'
+                  ? 'border-indigo-300 bg-surface/60 text-indigo-600'
                   : 'border-zinc-300 text-zinc-400 hover:border-zinc-400 hover:text-zinc-600'
               }`}
             >
